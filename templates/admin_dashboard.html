@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel Dashboard — SangPintar Pro Version 1.0.0.0{% endblock %}
+{% block body %}
+<div class="admin-layout">
+    <!-- SIDEBAR NAV -->
+    <div class="admin-sidebar">
+        <div class="brand">
+            <h2>🤖 SangPintar Pro</h2>
+            <small>Admin Panel Dashboard</small>
+            <div style="margin-top:0.5rem; font-size:0.75rem; color:#4ade80;">
+                ● Database: Supabase PostgreSQL
+            </div>
+        </div>
+        <a href="#tab-overview" class="nav-item active" onclick="switchAdminTab('tab-overview', this)">
+            📊 Overview & Statistik
+        </a>
+        <a href="#tab-users" class="nav-item" onclick="switchAdminTab('tab-users', this)">
+            👥 Semua Data User
+        </a>
+        <a href="#tab-pending" class="nav-item" onclick="switchAdminTab('tab-pending', this)">
+            ⏳ Pembayaran Pending ({{ stats.pending }})
+        </a>
+        <a href="#tab-validated" class="nav-item" onclick="switchAdminTab('tab-validated', this)">
+            ✅ Pembayaran Valid ({{ stats.validated }})
+        </a>
+        
+        <div style="padding:1.5rem; margin-top:auto; border-top:1px solid var(--border);">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                Logged in as: <strong>{{ admin_email }}</strong>
+            </div>
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-danger btn-sm btn-block">
+                🚪 Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="admin-main">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <h1 style="font-size:1.6rem; color:var(--text);">Admin Panel Dashboard</h1>
+                <p style="color:var(--text-muted); font-size:0.9rem;">
+                    Kelola data user, verifikasi bukti pembayaran QRISS, dan validasi kode lisensi.
+                </p>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+                <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm">🏠 Ke Halaman Depan</a>
+                <button type="button" class="btn btn-primary btn-sm" onclick="location.reload()">🔄 Refresh Data</button>
+            </div>
+        </div>
+
+        <!-- STATS OVERVIEW CARDS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total }}</div>
+                <div class="stat-label">Total User Terdaftar</div>
+            </div>
+            <div class="stat-card" style="border-color:rgba(245,158,11,0.4);">
+                <div class="stat-value" style="color:var(--warning);">{{ stats.pending }}</div>
+                <div class="stat-label">Menunggu Validasi</div>
+            </div>
+            <div class="stat-card" style="border-color:rgba(22,163,74,0.4);">
+                <div class="stat-value" style="color:var(--success);">{{ stats.validated }}</div>
+                <div class="stat-label">Tervalidasi / Berhasil</div>
+            </div>
+            <div class="stat-card" style="border-color:rgba(220,38,38,0.4);">
+                <div class="stat-value" style="color:var(--danger);">{{ stats.rejected }}</div>
+                <div class="stat-label">Ditolak</div>
+            </div>
+        </div>
+
+        <!-- TAB 1: OVERVIEW & DAFTAR TERBARU -->
+        <div class="admin-tab-content active" id="tab-overview">
+            <div class="card">
+                <h2 class="card-title">⏳ Menunggu Validasi Bukti Pembayaran</h2>
+                <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.9rem;">
+                    Validasi pembayaran user di bawah ini. Ketika tombol <strong>Validasi</strong> ditekan, sistem otomatis meng-generate <strong>Code Licence</strong> dan memperbarui status user.
+                </p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama User</th>
+                                <th>Email</th>
+                                <th>Nomor Telepon</th>
+                                <th>Bukti Upload Gambar User</th>
+                                <th>Tanggal Submit</th>
+                                <th>Aksi Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in pending_users %}
+                            <tr id="row-user-{{ u.id }}">
+                                <td><strong>#{{ u.id }}</strong></td>
+                                <td>{{ u.nama_user }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.nomor_telepon or '-' }}</td>
+                                <td>
+                                    {% if u.payment_proof_path %}
+                                        {% if u.payment_proof_path.endswith('.pdf') %}
+                                            <a href="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}" target="_blank" class="btn btn-outline btn-sm">
+                                                📄 Lihat PDF
+                                            </a>
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}"
+                                                 class="proof-thumb" title="Klik untuk perbesar"
+                                                 onclick="openProofPreview(this.src)">
+                                        {% endif %}
+                                    {% else %}
+                                        <span style="color:var(--text-muted);">Tidak ada file</span>
+                                    {% endif %}
+                                </td>
+                                <td style="font-size:0.82rem;">{{ u.created_at }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="validateUserPayment({{ u.id }})">
+                                            ✅ Validasi
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="rejectUserPayment({{ u.id }})">
+                                            ❌ Tolak
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not pending_users %}
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">
+                                    🎉 Semua pembayaran saat ini sudah diproses! Tidak ada antrian pending.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SEMUA DATA USER -->
+        <div class="admin-tab-content" id="tab-users" style="display:none;">
+            <div class="card">
+                <h2 class="card-title">👥 Semua Data User Terdaftar</h2>
+                <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.9rem;">
+                    Daftar seluruh user beserta nomor telepon, bukti pembayaran, dan status lisensi.
+                </p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama User</th>
+                                <th>Email</th>
+                                <th>Nomor Telepon</th>
+                                <th>Bukti Upload Gambar User</th>
+                                <th>Status Pembayaran</th>
+                                <th>Code Licence</th>
+                                <th>Tanggal Terdaftar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            <tr>
+                                <td><strong>#{{ u.id }}</strong></td>
+                                <td>{{ u.nama_user }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.nomor_telepon or '-' }}</td>
+                                <td>
+                                    {% if u.payment_proof_path %}
+                                        {% if u.payment_proof_path.endswith('.pdf') %}
+                                            <a href="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}" target="_blank" class="btn btn-outline btn-sm">
+                                                📄 Buka PDF
+                                            </a>
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}"
+                                                 class="proof-thumb" title="Klik untuk perbesar"
+                                                 onclick="openProofPreview(this.src)">
+                                        {% endif %}
+                                    {% else %}
+                                        <span style="color:var(--text-muted);">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if u.payment_status == 'validated' %}
+                                        <span class="status-indicator status-success">✅ Validated</span>
+                                    {% elif u.payment_status == 'rejected' %}
+                                        <span class="status-indicator status-error">❌ Rejected</span>
+                                    {% else %}
+                                        <span class="status-indicator status-pending">⏳ Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if u.license_code %}
+                                        <code style="font-size:0.85rem; color:#4ade80; font-weight:bold;">{{ u.license_code }}</code>
+                                    {% else %}
+                                        <span style="color:var(--text-muted);">-</span>
+                                    {% endif %}
+                                </td>
+                                <td style="font-size:0.82rem;">{{ u.created_at }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% if not users %}
+                            <tr>
+                                <td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                                    Belum ada data user.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PENDING PAYMENTS -->
+        <div class="admin-tab-content" id="tab-pending" style="display:none;">
+            <div class="card">
+                <h2 class="card-title">⏳ Daftar Pembayaran Pending</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama User</th>
+                                <th>Email</th>
+                                <th>Nomor Telepon</th>
+                                <th>Bukti Gambar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in pending_users %}
+                            <tr>
+                                <td>#{{ u.id }}</td>
+                                <td>{{ u.nama_user }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.nomor_telepon or '-' }}</td>
+                                <td>
+                                    {% if u.payment_proof_path %}
+                                        {% if u.payment_proof_path.endswith('.pdf') %}
+                                            <a href="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}" target="_blank" class="btn btn-outline btn-sm">Lihat PDF</a>
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='uploads/' + u.payment_proof_path) }}" class="proof-thumb" onclick="openProofPreview(this.src)">
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="validateUserPayment({{ u.id }})">Validasi</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not pending_users %}
+                            <tr><td colspan="6" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Tidak ada data pending.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: VALIDATED -->
+        <div class="admin-tab-content" id="tab-validated" style="display:none;">
+            <div class="card">
+                <h2 class="card-title">✅ Daftar User dengan Lisensi Valid</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama User</th>
+                                <th>Email</th>
+                                <th>Nomor Telepon</th>
+                                <th>Code Licence</th>
+                                <th>Waktu Validasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in validated_users %}
+                            <tr>
+                                <td>#{{ u.id }}</td>
+                                <td>{{ u.nama_user }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.nomor_telepon or '-' }}</td>
+                                <td><code style="color:#4ade80; font-weight:bold;">{{ u.license_code }}</code></td>
+                                <td style="font-size:0.82rem;">{{ u.validated_at or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% if not validated_users %}
+                            <tr><td colspan="6" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Belum ada user tervalidasi.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PREVIEW IMAGE MODAL -->
+<div class="img-modal-overlay" id="proof-image-modal" onclick="this.classList.remove('show')">
+    <img id="proof-image-element" src="" alt="Bukti Transfer">
+</div>
+
+<script>
+function switchAdminTab(tabId, navElement) {
+    document.querySelectorAll('.admin-tab-content').forEach(function(content) {
+        content.style.display = 'none';
+    });
+    document.getElementById(tabId).style.display = 'block';
+
+    document.querySelectorAll('.admin-sidebar .nav-item').forEach(function(item) {
+        item.classList.remove('active');
+    });
+    if (navElement) {
+        navElement.classList.add('active');
+    }
+}
+
+function openProofPreview(imageSrc) {
+    document.getElementById('proof-image-element').src = imageSrc;
+    document.getElementById('proof-image-modal').classList.add('show');
+}
+
+function validateUserPayment(userId) {
+    if (!confirm('Validasi pembayaran untuk User ID #' + userId + '? Lisensi akan digenerate otomatis.')) {
+        return;
+    }
+
+    fetch('/api/admin/validate/' + userId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            alert('✅ Validasi Berhasil!\n\n' +
+                  'Selamat pembelian kode lisensi sukses, mohon copy paste code licence ini Ke Bot SangPintar di front end nya:\n\n' +
+                  'Code Licence: ' + data.license_code);
+            location.reload();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    })
+    .catch(function(err) {
+        alert('Terjadi kesalahan: ' + err.message);
+    });
+}
+
+function rejectUserPayment(userId) {
+    if (!confirm('Tolak bukti pembayaran User ID #' + userId + '?')) {
+        return;
+    }
+
+    fetch('/api/admin/reject/' + userId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            alert('Status diubah menjadi: Ditolak');
+            location.reload();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    })
+    .catch(function(err) {
+        alert('Terjadi kesalahan: ' + err.message);
+    });
+}
+</script>
+{% endblock %}

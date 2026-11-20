@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Halaman Isi Data User — SangPintar Pro{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>📝 Halaman Isi Data User</h1>
+        <p class="subtitle">SangPintar Pro Version 1.0.0.0 • Registrasi Lisensi Langganan</p>
+        <span class="version-badge">PT Ananda Technology Solution</span>
+    </div>
+
+    <div class="card" style="max-width:720px; margin:0 auto;">
+        <h2 class="card-title">👤 Formulir Pendaftaran Data & Bukti Pembayaran</h2>
+        <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.92rem;">
+            Silakan isi data diri Anda di bawah ini secara lengkap serta unggah gambar bukti transfer QRIS. Data yang Anda kirimkan akan masuk ke <strong>Admin Panel Dashboard</strong> untuk proses validasi dan penerbitan <strong>Code Licence</strong>.
+        </p>
+
+        {% if success %}
+        <div class="alert alert-success">
+            <span style="font-size:1.3rem;">✅</span>
+            <div>
+                <strong>Berhasil Mengirim Data!</strong>
+                <p style="margin-top:0.25rem;">{{ success }}</p>
+                {% if license_code %}
+                <div style="margin-top:0.75rem; background:rgba(0,0,0,0.3); padding:0.75rem; border-radius:6px;">
+                    <p style="font-size:0.9rem; margin-bottom:0.25rem;">Selamat pembelian kode lisensi sukses, mohon copy paste code licence ini Ke Bot SangPintar di front end nya:</p>
+                    <code style="font-size:1.1rem; color:#4ade80; font-weight:bold;">{{ license_code }}</code>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-error">
+            <span style="font-size:1.3rem;">❌</span>
+            <div>
+                <strong>Gagal Mengirim Data</strong>
+                <p style="margin-top:0.25rem;">{{ error }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('user_data_page') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="nama_user">👤 Nama User * (Wajib diisi)</label>
+                <input type="text" class="form-control" id="nama_user" name="nama_user"
+                       required placeholder="Masukkan nama lengkap Anda"
+                       value="{{ request.form.get('nama_user', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="email">📧 Email * (Wajib diisi)</label>
+                <input type="email" class="form-control" id="email" name="email"
+                       required placeholder="email_anda@gmail.com"
+                       value="{{ request.form.get('email', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="nomor_telepon">📞 Nomor Telepon * (Wajib diisi)</label>
+                <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon"
+                       required placeholder="+62-851-xxxx-xxxx"
+                       value="{{ request.form.get('nomor_telepon', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="telegram_username">✈️ Username Telegram (Opsional)</label>
+                <input type="text" class="form-control" id="telegram_username" name="telegram_username"
+                       placeholder="@username_telegram"
+                       value="{{ request.form.get('telegram_username', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ Upload Bukti Gambar User * (Wajib diisi: JPG, PNG, atau PDF)</label>
+                <div class="file-input-wrapper">
+                    <div class="file-input-label" id="user-data-file-label">
+                        📁 Klik untuk mengunggah file bukti pembayaran
+                    </div>
+                    <input type="file" id="payment_proof" name="payment_proof"
+                           accept="image/*,.pdf" required onchange="handleUserDataFile(this)">
+                </div>
+                <img id="user-data-preview" class="file-preview" alt="Preview Gambar Bukti">
+                <p id="user-data-file-name" class="form-hint"></p>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block" style="padding:0.9rem; font-size:1.05rem; margin-top:2rem;">
+                📤 Kirim Data User & Bukti Pembayaran
+            </button>
+        </form>
+
+        <div style="display:flex; justify-content:center; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border);">
+            <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm">← Kembali ke Setup Wizard</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function handleUserDataFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    document.getElementById('user-data-file-name').textContent = '📎 File terpilih: ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+    document.getElementById('user-data-file-label').textContent = '✅ File dipilih: ' + file.name;
+    
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('user-data-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,628 @@
+PANDUAN LENGKAP SETUP, INSTALL, DAN MENGGUNAKAN OLLAMA
+================================================================
+
+Panduan ini dibuat untuk pengguna pemula yang ingin menjalankan Large Language Model (LLM)
+secara lokal menggunakan Ollama di Laptop/Komputer.
+
+Ollama memungkinkan Anda menjalankan model AI secara lokal sehingga aplikasi Anda dapat
+berkomunikasi dengan model melalui CLI maupun API lokal.
+
+Website resmi:
+https://ollama.com/
+
+Dokumentasi:
+https://docs.ollama.com/
+
+
+DAFTAR ISI
+----------
+1. Apa itu Ollama?
+2. Persiapan sebelum instalasi
+3. Install Ollama di Windows
+4. Install Ollama di macOS
+5. Install Ollama di Linux
+6. Memastikan Ollama berhasil ter-install
+7. Download/Pull model AI
+8. Menjalankan model AI
+9. Cara menggunakan Ollama untuk chatting
+10. Melihat daftar model
+11. Melihat model yang sedang berjalan
+12. Menghapus model
+13. Menghentikan model
+14. Menjalankan Ollama Server/API
+15. Mengecek API Ollama
+16. Contoh penggunaan API dengan cURL
+17. Contoh penggunaan Ollama dengan Python
+18. Menggunakan Ollama dengan aplikasi AI
+19. Contoh penggunaan untuk coding
+20. Menggunakan Ollama dengan OpenClaw
+21. Mengatur lokasi penyimpanan model
+22. Troubleshooting
+23. Tips memilih model
+24. Catatan keamanan dan privasi
+
+
+1. APA ITU OLLAMA?
+------------------
+Ollama adalah platform untuk menjalankan Large Language Model (LLM) secara lokal di
+komputer Anda.
+
+Dengan Ollama, Anda dapat:
+- Menjalankan model AI secara lokal.
+- Melakukan percakapan dengan model melalui terminal.
+- Menggunakan model AI tanpa harus membuat aplikasi AI dari awal.
+- Menghubungkan model dengan aplikasi melalui API lokal.
+- Menggunakan model untuk coding, penulisan, analisis teks, dan berbagai kebutuhan AI.
+- Mengintegrasikan LLM lokal dengan berbagai tools/aplikasi yang mendukung Ollama.
+
+Ollama menyediakan aplikasi untuk Windows dan macOS serta instalasi melalui terminal
+untuk Linux.
+
+
+2. PERSIAPAN SEBELUM INSTALASI
+------------------------------
+Sebelum meng-install Ollama, siapkan:
+
+- Laptop atau komputer.
+- Koneksi internet untuk mengunduh installer dan model AI.
+- Ruang penyimpanan yang cukup.
+- RAM yang memadai sesuai ukuran model yang ingin dijalankan.
+- GPU bersifat opsional, tetapi GPU yang didukung dapat membantu mempercepat proses
+  inference.
+
+PENTING:
+Ukuran model AI berbeda-beda. Model yang lebih besar biasanya membutuhkan lebih banyak
+RAM/VRAM dan ruang penyimpanan.
+
+Untuk komputer dengan spesifikasi terbatas, mulailah dengan model yang relatif kecil.
+
+
+3. INSTALL OLLAMA DI WINDOWS
+----------------------------
+
+Metode A - Installer resmi
+
+1. Buka:
+   https://ollama.com/download/windows
+
+2. Download installer Ollama untuk Windows.
+
+3. Jalankan installer yang sudah di-download.
+
+4. Ikuti proses instalasi sampai selesai.
+
+5. Setelah selesai, buka PowerShell atau Command Prompt (CMD).
+
+6. Jalankan:
+   ollama --version
+
+Jika versi Ollama tampil, berarti instalasi berhasil.
+
+Catatan:
+Ollama untuk Windows membutuhkan Windows 10 atau versi yang lebih baru.
+
+
+Metode B - PowerShell
+
+Anda juga dapat menggunakan PowerShell dengan perintah:
+
+   irm https://ollama.com/install.ps1 | iex
+
+Gunakan PowerShell dengan hati-hati dan pastikan perintah berasal dari website resmi
+Ollama.
+
+
+4. INSTALL OLLAMA DI macOS
+--------------------------
+1. Buka:
+   https://ollama.com/download
+
+2. Download aplikasi Ollama untuk macOS.
+
+3. Install aplikasi sesuai petunjuk.
+
+4. Buka Terminal.
+
+5. Periksa instalasi:
+
+   ollama --version
+
+Catatan:
+Dokumentasi resmi Ollama saat ini mencantumkan macOS 14 Sonoma atau versi yang lebih baru
+untuk aplikasi macOS.
+
+
+5. INSTALL OLLAMA DI LINUX
+--------------------------
+Buka Terminal, kemudian jalankan:
+
+   curl -fsSL https://ollama.com/install.sh | sh
+
+Setelah instalasi selesai, periksa versi:
+
+   ollama --version
+
+Jika versi Ollama tampil, instalasi berhasil.
+
+Jika Anda menggunakan WSL di Windows, Anda juga dapat memasang Ollama di lingkungan Linux
+tersebut dengan metode instalasi Linux.
+
+
+6. MEMASTIKAN OLLAMA BERHASIL TER-INSTALL
+-----------------------------------------
+Jalankan:
+
+   ollama --version
+
+Contoh hasil:
+
+   ollama version x.x.x
+
+Nomor versi dapat berbeda karena Ollama terus mendapatkan pembaruan.
+
+
+7. DOWNLOAD / PULL MODEL AI
+---------------------------
+Setelah Ollama ter-install, Anda perlu memiliki model AI.
+
+Format perintah:
+
+   ollama pull NAMA_MODEL
+
+Contoh:
+
+   ollama pull qwen2.5:1.5b
+
+Perintah tersebut akan mengunduh model ke komputer.
+
+Model yang tersedia dapat dilihat melalui:
+https://ollama.com/search
+
+CATATAN:
+Nama model dan tag harus sesuai dengan model yang tersedia di Ollama.
+
+
+8. MENJALANKAN MODEL AI
+-----------------------
+Setelah model tersedia, jalankan:
+
+   ollama run qwen2.5:1.5b
+
+Jika model belum tersedia secara lokal, Ollama dapat mengunduhnya terlebih dahulu.
+
+Setelah model aktif, Anda dapat langsung mengetik pertanyaan di terminal.
+
+Contoh:
+
+   >>> Halo, siapa kamu?
+
+Untuk keluar dari sesi chat, gunakan:
+   /bye
+
+Perintah yang tersedia dapat berbeda sesuai versi Ollama.
+
+
+9. CARA MENGGUNAKAN OLLAMA UNTUK CHATTING
+-----------------------------------------
+Contoh sederhana:
+
+   ollama run qwen2.5:1.5b
+
+Kemudian ketik:
+
+   Jelaskan apa itu Artificial Intelligence dengan bahasa sederhana.
+
+Anda juga dapat meminta model:
+
+   Buatkan contoh program Python sederhana untuk membaca file CSV.
+
+Atau:
+
+   Jelaskan error Python berikut dan berikan solusinya.
+
+
+10. MELIHAT DAFTAR MODEL
+------------------------
+Untuk melihat model yang sudah tersimpan di komputer:
+
+   ollama list
+
+Informasi yang biasanya ditampilkan mencakup nama model, ID, ukuran, dan informasi
+lain yang tersedia pada versi Ollama yang digunakan.
+
+
+11. MELIHAT MODEL YANG SEDANG BERJALAN
+--------------------------------------
+Gunakan:
+
+   ollama ps
+
+Perintah ini berguna untuk mengetahui model yang sedang aktif.
+
+
+12. MENGHAPUS MODEL
+-------------------
+Jika ingin menghapus model yang tidak diperlukan:
+
+   ollama rm qwen2.5:1.5b
+
+Pastikan nama model sesuai dengan hasil:
+
+   ollama list
+
+Menghapus model dapat membantu menghemat ruang penyimpanan.
+
+
+13. MENGHENTIKAN MODEL
+----------------------
+Jika sebuah model sedang berjalan, Anda dapat melihat model aktif dengan:
+
+   ollama ps
+
+Kemudian gunakan perintah stop sesuai model yang ingin dihentikan:
+
+   ollama stop NAMA_MODEL
+
+Contoh:
+
+   ollama stop qwen2.5:1.5b
+
+
+14. MENJALANKAN OLLAMA SERVER / API
+-----------------------------------
+Ollama menyediakan API lokal yang dapat digunakan oleh aplikasi.
+
+Untuk menjalankan server secara manual:
+
+   ollama serve
+
+Secara default, API Ollama tersedia pada:
+
+   http://localhost:11434
+
+Pada instalasi desktop tertentu, Ollama dapat berjalan di background sehingga Anda
+tidak selalu perlu menjalankan `ollama serve` secara manual.
+
+
+15. MENGECEK API OLLAMA
+-----------------------
+Untuk mengecek model yang tersedia melalui API:
+
+   curl http://localhost:11434/api/tags
+
+Jika Ollama berjalan dengan benar, endpoint tersebut akan memberikan informasi model
+yang tersedia secara lokal.
+
+
+16. CONTOH MENGGUNAKAN API DENGAN cURL
+--------------------------------------
+Contoh request ke endpoint generate:
+
+   curl http://localhost:11434/api/generate -d "{"model":"qwen2.5:1.5b","prompt":"Jelaskan AI secara singkat","stream":false}"
+
+Jika menggunakan Linux/macOS, format JSON dapat ditulis lebih mudah:
+
+   curl http://localhost:11434/api/generate      -d '{
+       "model": "qwen2.5:1.5b",
+       "prompt": "Jelaskan AI secara singkat",
+       "stream": false
+     }'
+
+Nama model harus disesuaikan dengan model yang Anda install.
+
+
+17. CONTOH MENGGUNAKAN OLLAMA DENGAN PYTHON
+-------------------------------------------
+Anda dapat menghubungkan aplikasi Python dengan Ollama.
+
+Install library Python:
+
+   pip install ollama
+
+Contoh program:
+
+   from ollama import chat
+
+   response = chat(
+       model='qwen2.5:1.5b',
+       messages=[
+           {
+               'role': 'user',
+               'content': 'Jelaskan apa itu Machine Learning.'
+           }
+       ]
+   )
+
+   print(response.message.content)
+
+Pastikan Ollama sedang berjalan dan model yang digunakan sudah tersedia.
+
+
+18. MENGGUNAKAN OLLAMA DENGAN APLIKASI AI
+-----------------------------------------
+Ollama dapat digunakan sebagai backend LLM lokal.
+
+Alur sederhananya:
+
+   User
+     |
+     v
+   Aplikasi Anda
+     |
+     v
+   Ollama API
+     |
+     v
+   Local LLM
+     |
+     v
+   Response
+     |
+     v
+   Aplikasi Anda
+     |
+     v
+   User
+
+Contohnya, aplikasi Flask, FastAPI, Node.js, atau aplikasi AI lainnya dapat mengirim
+request ke:
+
+   http://localhost:11434
+
+Dengan cara ini, aplikasi dapat menggunakan model lokal tanpa harus memanggil provider
+LLM cloud untuk setiap request.
+
+
+19. CONTOH PENGGUNAAN UNTUK CODING
+----------------------------------
+Ollama dapat digunakan untuk membantu pekerjaan pemrograman, misalnya:
+
+- Menjelaskan kode.
+- Membuat contoh kode.
+- Mencari kemungkinan penyebab error.
+- Refactoring kode.
+- Membuat dokumentasi.
+- Membantu memahami project lama.
+
+Contoh:
+
+   ollama run qwen2.5:1.5b
+
+Kemudian:
+
+   Jelaskan kode Python berikut secara bertahap:
+   [tempel kode di sini]
+
+
+20. MENGGUNAKAN OLLAMA DENGAN OPENCLAW
+--------------------------------------
+Jika Anda ingin menggunakan Ollama sebagai provider model lokal untuk OpenClaw,
+pastikan:
+
+1. Ollama sudah ter-install.
+2. Ollama dapat dijalankan.
+3. Model yang ingin digunakan sudah tersedia.
+4. Nama model yang digunakan OpenClaw sama dengan model yang tersedia di Ollama.
+
+Contoh model:
+
+   qwen2.5:1.5b
+
+Untuk menguji model secara langsung:
+
+   ollama run qwen2.5:1.5b
+
+Jika model dapat digunakan, selanjutnya Anda dapat mengonfigurasikan OpenClaw agar
+menggunakan provider Ollama sesuai dokumentasi OpenClaw dan versi yang Anda gunakan.
+
+Catatan:
+Perintah OpenClaw dapat berubah mengikuti versi OpenClaw. Gunakan dokumentasi OpenClaw
+versi terbaru apabila konfigurasi provider mengalami perubahan.
+
+
+21. MENGATUR LOKASI PENYIMPANAN MODEL
+-------------------------------------
+Model AI dapat menggunakan ruang penyimpanan yang cukup besar.
+
+Jika Anda memiliki banyak model, perhatikan kapasitas drive yang digunakan Ollama.
+
+Untuk Windows, lokasi penyimpanan dan pengaturan environment dapat berbeda tergantung
+versi dan konfigurasi sistem.
+
+Jika ingin memindahkan lokasi model, gunakan konfigurasi environment variable yang
+didukung oleh versi Ollama Anda dan baca dokumentasi resmi sebelum melakukan perubahan.
+
+Jangan memindahkan folder model secara manual tanpa memahami konfigurasi Ollama karena
+dapat menyebabkan model tidak terdeteksi.
+
+
+22. TROUBLESHOOTING
+-------------------
+
+A. Perintah `ollama` tidak dikenali
+
+Jika muncul:
+
+   'ollama' is not recognized...
+
+Kemungkinan Ollama belum ter-install dengan benar atau PATH belum diperbarui.
+
+Solusi:
+1. Pastikan Ollama sudah ter-install.
+2. Tutup dan buka kembali CMD/PowerShell.
+3. Coba:
+   ollama --version
+4. Jika masih bermasalah, restart Windows dan coba kembali.
+
+
+B. Model tidak ditemukan
+
+Jika muncul error bahwa model tidak ditemukan:
+
+1. Periksa model:
+   ollama list
+
+2. Download model:
+   ollama pull NAMA_MODEL
+
+3. Jalankan:
+   ollama run NAMA_MODEL
+
+
+C. Ollama API tidak dapat diakses
+
+Coba:
+
+   curl http://localhost:11434/api/tags
+
+Jika gagal:
+1. Pastikan Ollama sedang berjalan.
+2. Pada Linux, coba:
+   ollama serve
+3. Periksa apakah port 11434 sedang digunakan aplikasi lain.
+
+
+D. Model berjalan sangat lambat
+
+Kemungkinan penyebab:
+- Model terlalu besar.
+- RAM tidak mencukupi.
+- GPU tidak digunakan atau tidak didukung.
+- Komputer sedang menjalankan banyak aplikasi.
+
+Solusi:
+- Gunakan model yang lebih kecil.
+- Tutup aplikasi yang tidak diperlukan.
+- Pastikan driver GPU sesuai jika menggunakan GPU.
+- Periksa penggunaan RAM/VRAM.
+
+
+E. Penyimpanan penuh
+
+Hapus model yang tidak digunakan:
+
+   ollama list
+
+Kemudian:
+
+   ollama rm NAMA_MODEL
+
+
+23. TIPS MEMILIH MODEL
+----------------------
+Untuk komputer dengan spesifikasi terbatas:
+- Mulai dari model kecil.
+- Uji performa sebelum menggunakan model yang lebih besar.
+
+Untuk komputer dengan RAM/VRAM lebih besar:
+- Anda dapat mencoba model dengan parameter lebih besar.
+- Perhatikan ukuran model sebelum melakukan download.
+
+Jangan hanya memilih model berdasarkan jumlah parameter. Pertimbangkan juga:
+- Kebutuhan pekerjaan.
+- Kemampuan reasoning.
+- Kemampuan coding.
+- Dukungan vision/multimodal jika diperlukan.
+- Ukuran model.
+- Kebutuhan RAM/VRAM.
+- Kecepatan inference.
+
+
+24. CATATAN KEAMANAN DAN PRIVASI
+--------------------------------
+Ollama dapat menjalankan model secara lokal di komputer.
+
+Namun, keamanan tetap bergantung pada bagaimana Anda mengonfigurasi aplikasi dan
+network komputer.
+
+Perhatikan hal berikut:
+
+1. Jangan membuka API Ollama ke internet secara sembarangan.
+2. Jangan mengekspos port 11434 ke publik tanpa memahami risiko keamanan.
+3. Jangan memasukkan password, API key, token, private key, atau data rahasia ke
+   prompt jika tidak diperlukan.
+4. Jangan membagikan konfigurasi yang berisi credential.
+5. Gunakan model dan software dari sumber yang terpercaya.
+
+
+RINGKASAN PERINTAH OLLAMA
+-------------------------
+
+Cek versi:
+   ollama --version
+
+Melihat model:
+   ollama list
+
+Download model:
+   ollama pull NAMA_MODEL
+
+Menjalankan model:
+   ollama run NAMA_MODEL
+
+Melihat model aktif:
+   ollama ps
+
+Menghentikan model:
+   ollama stop NAMA_MODEL
+
+Menghapus model:
+   ollama rm NAMA_MODEL
+
+Menjalankan server:
+   ollama serve
+
+Cek API:
+   curl http://localhost:11434/api/tags
+
+
+CONTOH ALUR PALING SEDERHANA
+----------------------------
+1. Install Ollama.
+2. Cek:
+   ollama --version
+3. Download model:
+   ollama pull qwen2.5:1.5b
+4. Jalankan:
+   ollama run qwen2.5:1.5b
+5. Mulai chatting dengan model.
+6. Jika ingin digunakan oleh aplikasi, akses API:
+   http://localhost:11434
+
+
+REFERENSI RESMI
+---------------
+Website Ollama:
+https://ollama.com/
+
+Download Ollama:
+https://ollama.com/download
+
+Windows:
+https://ollama.com/download/windows
+
+Linux:
+https://ollama.com/download/linux
+
+Dokumentasi:
+https://docs.ollama.com/
+
+Model Library:
+https://ollama.com/search
+
+
+CATATAN AKHIR
+-------------
+Panduan ini dibuat sebagai panduan praktis untuk pemula. Perintah, nama model,
+fitur, persyaratan sistem, dan konfigurasi Ollama dapat berubah seiring pembaruan
+software.
+
+Jika sebuah perintah tidak bekerja, periksa terlebih dahulu:
+- Versi Ollama.
+- Sistem operasi.
+- Nama model.
+- Status Ollama.
+- Pesan error yang muncul di terminal.
+- Dokumentasi resmi Ollama versi terbaru.
+
+Selamat belajar dan bereksperimen dengan Local AI menggunakan Ollama!

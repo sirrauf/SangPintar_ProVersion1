@@ -1,0 +1,110 @@
+Panduan Belajar Autonomous OpenClaw
+
+Panduan ini berisi langkah-langkah dasar untuk menyiapkan OpenClaw dan Ollama di Windows menggunakan WSL. Ikuti setiap langkah secara berurutan agar proses instalasi dan konfigurasi berjalan dengan baik.
+
+1. Download OpenClaw
+Kunjungi website resmi OpenClaw:
+https://openclaw.ai/
+
+Scroll ke bagian “Quick Start”, pilih tab “Apps”, kemudian pilih “Windows”.
+
+2. Download dan Install Ollama Desktop
+Untuk Windows, download Ollama melalui:
+https://ollama.com/download/windows
+
+Untuk Linux/WSL, Ollama dapat di-install dengan perintah:
+curl -fsSL https://ollama.com/install.sh | sh
+
+3. Membuka Distro OpenClaw melalui WSL
+Buka Command Prompt (CMD) di Windows.
+
+Untuk melihat daftar distro WSL yang tersedia, jalankan:
+wsl --list
+
+Jika terdapat distro bernama “OpenClawGateway”, jalankan:
+wsl -d OpenClawGateway -u root
+
+4. Membuat atau Mengatur Password Root
+Di dalam distro WSL OpenClaw, buat password root dengan perintah:
+passwd root
+
+Ikuti instruksi yang muncul untuk memasukkan password baru.
+
+5. Install Curl dan Zstd
+Di dalam WSL OpenClaw, jalankan:
+apt install -y zstd curl
+
+Perintah ini digunakan untuk memasang paket yang dibutuhkan pada proses instalasi berikutnya.
+
+6. Install Ollama di WSL
+Setelah Curl tersedia, jalankan:
+curl -fsSL https://ollama.com/install.sh | sh
+
+Tunggu sampai proses instalasi Ollama selesai.
+
+7. Install dan Konfigurasi OpenClaw Dashboard
+Di dalam WSL, jalankan:
+openclaw onboard
+
+Ikuti seluruh proses setup hingga selesai. Saat diminta memilih provider/model, pilih Ollama sesuai kebutuhan.
+
+8. Login atau Menghubungkan OpenClaw dengan Ollama
+Untuk mengatur autentikasi provider Ollama, jalankan:
+openclaw models auth login --provider ollama
+
+Ikuti instruksi yang ditampilkan di terminal.
+
+9. Memeriksa Koneksi Ollama
+Untuk memastikan Ollama sudah ter-install dan dapat diakses, jalankan:
+curl http://127.0.0.1:11434/api/tags
+
+Jika koneksi berhasil, perintah tersebut akan menampilkan informasi model Ollama yang tersedia.
+
+10. Menjalankan Ollama dengan OpenClaw
+Di dalam WSL, jalankan:
+ollama launch openclaw --model qwen2.5:1.5b
+
+Perintah tersebut menjalankan OpenClaw menggunakan model Qwen 2.5 1.5B.
+
+11. Download Model LLM
+Jika muncul pilihan “Launch Anyway”, pilih opsi tersebut.
+
+Selanjutnya, model LLM Qwen akan di-download secara otomatis jika belum tersedia di sistem.
+
+12. Membuka OpenClaw Dashboard
+Untuk menjalankan gateway OpenClaw, di dalam WSL jalankan:
+openclaw gateway
+
+Setelah berhasil dijalankan, terminal akan menampilkan URL OpenClaw Dashboard. Biasanya URL yang digunakan adalah:
+http://127.0.0.1:18789/
+
+Buka URL tersebut melalui browser untuk mengakses dashboard.
+
+13. Memeriksa Gateway Token OpenClaw
+Untuk melihat environment variable token, jalankan:
+printenv OPENCLAW_GATEWAY_TOKEN
+
+Kemudian, untuk melihat environment variable yang berkaitan dengan OpenClaw, jalankan:
+env | grep OPENCLAW
+
+Anda juga dapat memeriksa konfigurasi OpenClaw dengan:
+cat ~/.openclaw/openclaw.json
+
+14. Menemukan Gateway Token pada File Konfigurasi
+Token biasanya tersimpan pada bagian konfigurasi berikut:
+
+"gateway": {
+  "auth": {
+    "mode": "token",
+    "token": "GANTI_DENGAN_TOKEN_ANDA"
+  }
+}
+
+PENTING:
+Jangan membagikan Gateway Token kepada orang lain dan jangan mengunggah token ke GitHub, media sosial, screenshot, atau forum publik. Token tersebut bersifat rahasia dan dapat digunakan untuk autentikasi ke OpenClaw Gateway.
+
+Catatan
+- Jalankan setiap perintah sesuai urutan langkah.
+- Pastikan WSL dan distro “OpenClawGateway” sudah tersedia sebelum melanjutkan langkah yang berkaitan dengan WSL.
+- Jika sebuah perintah menghasilkan error, baca pesan error pada terminal sebelum melanjutkan ke langkah berikutnya.
+- Nama distro, versi OpenClaw, versi Ollama, model, dan port dapat berbeda tergantung konfigurasi sistem.

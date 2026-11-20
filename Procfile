@@ -1,0 +1,1 @@
+web: gunicorn --workers 3 --bind unix:SangPintar.sock -m 007 app:app

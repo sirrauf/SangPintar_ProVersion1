@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% block title %}Setup Wizard — SangPintar Pro Version 1.0.0.0{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>🤖 SangPintar Pro</h1>
+        <p class="subtitle">Autonomous AI Telegram Bot • Integrasi OpenClaw & Ollama</p>
+        <span class="version-badge">Version 1.0.0.0 Pro</span>
+    </div>
+
+    <!-- WIZARD STEP NAVIGATION -->
+    <div class="steps">
+        <div class="step active" id="step-nav-1">
+            <div class="step-number">1</div>
+            <div class="step-label">Koneksi Host</div>
+        </div>
+        <div class="step" id="step-nav-2">
+            <div class="step-number">2</div>
+            <div class="step-label">Bot Telegram</div>
+        </div>
+        <div class="step" id="step-nav-3">
+            <div class="step-number">3</div>
+            <div class="step-label">QRIS Payment</div>
+        </div>
+        <div class="step" id="step-nav-4">
+            <div class="step-number">4</div>
+            <div class="step-label">Kode Lisensi</div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- STEP 1: VALIDASI KONEKSI OPENCLAW_HOST DAN OLAMA_HOST          -->
+    <!-- ============================================================== -->
+    <div class="step-panel active" id="panel-step-1">
+        <div class="card">
+            <h2 class="card-title">🔌 1. Input & Cek Koneksi Host OpenClaw dan Ollama</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">
+                Masukkan URL host untuk <strong>OPENCLAW_HOST</strong> dan <strong>OLAMA_HOST</strong>, kemudian klik tombol validasi untuk mengecek koneksi service AI.
+            </p>
+
+            <div class="form-group">
+                <label for="openclaw-host">🌐 OPENCLAW_HOST</label>
+                <input type="text" class="form-control" id="openclaw-host"
+                       value="{{ openclaw_host }}" placeholder="http://127.0.0.1:18789/">
+                <p class="form-hint">Port default OpenClaw Gateway: 18789</p>
+            </div>
+
+            <div class="form-group">
+                <label for="ollama-host">🦙 OLAMA_HOST (OLLAMA)</label>
+                <input type="text" class="form-control" id="ollama-host"
+                       value="{{ olama_host }}" placeholder="http://127.0.0.1:11434">
+                <p class="form-hint">Port default Ollama Local LLM: 11434</p>
+            </div>
+
+            <div class="btn-group" style="margin-top:1.5rem; margin-bottom:1.5rem;">
+                <button type="button" class="btn btn-primary" id="btn-check-hosts" onclick="validateHostsConnection()">
+                    🔍 Validasi & Cek Koneksi OpenClaw & Ollama
+                </button>
+            </div>
+
+            <!-- RESULT AREA STEP 1 -->
+            <div id="host-results-area" style="display:none;">
+                <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+                    <!-- OpenClaw Status Indicator -->
+                    <div id="badge-openclaw" class="status-indicator status-pending">
+                        <span class="status-dot yellow"></span>
+                        <span id="text-openclaw">OpenClaw: Memeriksa...</span>
+                    </div>
+                    <!-- Ollama Status Indicator -->
+                    <div id="badge-ollama" class="status-indicator status-pending">
+                        <span class="status-dot yellow"></span>
+                        <span id="text-ollama">Ollama: Memeriksa...</span>
+                    </div>
+                </div>
+
+                <!-- Green Notification Box when Success: 'conect succees' -->
+                <div id="box-connect-success" style="display:none;" class="alert alert-success">
+                    <span style="font-size:1.4rem;">✅</span>
+                    <div>
+                        <strong style="font-size:1.1rem; text-transform:lowercase; letter-spacing:0.5px;">conect succees</strong>
+                        <p style="margin-top:0.25rem; font-size:0.9rem;">
+                            Koneksi ke host OpenClaw dan Ollama berhasil divalidasi! Sistem siap mengarahkan ke Bot Telegram.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="box-connect-details" style="margin-top:0.75rem;"></div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:2rem;">
+                <button type="button" class="btn btn-primary" id="btn-next-to-step2" onclick="switchWizardStep(2)" disabled>
+                    Lanjut ke Bot Telegram ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- STEP 2: VERIFIKASI & START BOT TELEGRAM                        -->
+    <!-- ============================================================== -->
+    <div class="step-panel" id="panel-step-2">
+        <div class="card">
+            <h2 class="card-title">🤖 2. Cek Token & Start Bot SangPintar Pro di Telegram</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">
+                Verifikasi <strong>TOKEN_BOT_TELEGRAM</strong> dan cek apakah <strong>Bot SangPintar Pro Version 1.0.0.0</strong> bisa dijalankan secara live.
+            </p>
+
+            <div class="form-group">
+                <label for="bot-token">🔑 Token Bot Telegram</label>
+                <input type="text" class="form-control" id="bot-token"
+                       value="{{ bot_token }}" placeholder="8971119313:AAGCs7DhqqdllCmSsq65N1rk4KahlzPWtNI">
+                <p class="form-hint">Token bot didapatkan dari @BotFather di Telegram</p>
+            </div>
+
+            <div class="btn-group" style="margin-top:1.5rem; margin-bottom:1.5rem;">
+                <button type="button" class="btn btn-primary" onclick="verifyBotToken()">
+                    ✅ Verifikasi Token Bot
+                </button>
+                <button type="button" class="btn btn-success" id="btn-start-telegram-bot" onclick="startTelegramBot()" disabled>
+                    🚀 Start Bot SangPintar Pro Version 1.0.0.0
+                </button>
+            </div>
+
+            <!-- RESULT AREA STEP 2 -->
+            <div id="bot-results-area" style="display:none;">
+                <div id="badge-bot" class="status-indicator status-pending" style="margin-bottom:1rem;">
+                    <span class="status-dot yellow"></span>
+                    <span id="text-bot">Memeriksa status bot...</span>
+                </div>
+                <div id="box-bot-message"></div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+                <button type="button" class="btn btn-outline" onclick="switchWizardStep(1)">⬅️ Kembali ke Host</button>
+                <button type="button" class="btn btn-primary" id="btn-next-to-step3" onclick="switchWizardStep(3)" disabled>
+                    Lanjut ke Pembayaran QRIS ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- STEP 3: TAMPILKAN QRCODE PAYMENT & UPLOAD BUKTI                -->
+    <!-- ============================================================== -->
+    <div class="step-panel" id="panel-step-3">
+        <div class="card">
+            <h2 class="card-title">💳 3. Pembayaran QRIS & Upload Bukti Pembayaran</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">
+                Klik tombol di bawah untuk menampilkan <strong>QRCode Payment</strong> dari file <code>QRISS/QRISS_ANTSGROUPS.pdf</code>, lalu lengkapi form dan upload bukti transfer Anda.
+            </p>
+
+            <!-- TOMBOL TAMPILKAN GAMBAR QRCODE PAYMENT -->
+            <div style="text-align:center; padding:1.5rem; background:rgba(37,99,235,0.05); border:1px dashed var(--border); border-radius:var(--radius); margin-bottom:2rem;">
+                <button type="button" class="btn btn-warning" style="font-size:1.05rem; padding:0.9rem 2rem;" onclick="openQRPaymentModal()">
+                    📱 Tampilkan Gambar QRCode Payment
+                </button>
+                <p style="margin-top:0.75rem; color:var(--text-muted); font-size:0.85rem;">
+                    File QRIS: <code>QRISS_ANTSGROUPS.pdf</code> (PT Ananda Technology Solution / ANTS Groups)
+                </p>
+            </div>
+
+            <hr style="border-color:var(--border); margin:2rem 0;">
+
+            <h3 style="font-size:1.15rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                📝 Formulir Pengiriman Bukti Pembayaran
+            </h3>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.9rem;">
+                Data ini akan diverifikasi oleh Admin melalui Admin Dashboard untuk mengaktifkan kode lisensi Anda.
+            </p>
+
+            <form id="wizard-user-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="form-nama">Nama User * (Wajib diisi)</label>
+                    <input type="text" class="form-control" id="form-nama" name="nama_user"
+                           required placeholder="Contoh: Ananda Rauf Maududi">
+                </div>
+
+                <div class="form-group">
+                    <label for="form-email">Email User * (Wajib diisi)</label>
+                    <input type="email" class="form-control" id="form-email" name="email"
+                           required placeholder="anandaraufm@gmail.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="form-phone">Nomor Telepon User (Wajib diisi)</label>
+                    <input type="text" class="form-control" id="form-phone" name="nomor_telepon"
+                           required placeholder="+62-851-xxxx-xxxx">
+                </div>
+
+                <div class="form-group">
+                    <label for="form-telegram">Username Telegram (Opsional)</label>
+                    <input type="text" class="form-control" id="form-telegram" name="telegram_username"
+                           placeholder="@username_telegram">
+                </div>
+
+                <div class="form-group">
+                    <label>Bukti Upload Gambar User * (Wajib diisi: JPG, PNG, atau PDF)</label>
+                    <div class="file-input-wrapper">
+                        <div class="file-input-label" id="file-label-text">
+                            📁 Klik di sini untuk memilih file bukti transfer pembayaran
+                        </div>
+                        <input type="file" id="form-proof" name="payment_proof"
+                               accept="image/*,.pdf" required onchange="handleFileSelected(this)">
+                    </div>
+                    <img id="image-preview" class="file-preview" alt="Preview Bukti">
+                    <p id="file-selected-name" class="form-hint"></p>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block" style="padding:0.9rem; font-size:1rem; margin-top:1.5rem;">
+                    📤 Kirim Data & Upload Bukti Pembayaran
+                </button>
+            </form>
+
+            <div id="submit-status-area" style="margin-top:1.25rem;"></div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+                <button type="button" class="btn btn-outline" onclick="switchWizardStep(2)">⬅️ Kembali ke Bot</button>
+                <button type="button" class="btn btn-primary" id="btn-next-to-step4" onclick="switchWizardStep(4)" disabled>
+                    Lanjut ke Status Lisensi ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- STEP 4: KODE LISENSI SETELAH VALIDASI ADMIN                    -->
+    <!-- ============================================================== -->
+    <div class="step-panel" id="panel-step-4">
+        <div class="card">
+            <h2 class="card-title">🔑 4. Status Validasi Admin & Kode Lisensi</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">
+                Setelah bukti transfer divalidasi oleh admin melalui Admin Dashboard, kode lisensi resmi SangPintar Pro Version 1.0.0.0 akan ditampilkan di bawah ini.
+            </p>
+
+            <div id="license-pending-box" class="alert alert-info">
+                <div>
+                    <strong>⏳ Status: Menunggu Validasi Pembayaran oleh Admin</strong>
+                    <p style="margin-top:0.5rem; font-size:0.9rem;">
+                        Admin sedang memeriksa bukti transfer Anda. Setelah divalidasi oleh Admin, kode lisensi Anda akan langsung ditampilkan di sini.
+                    </p>
+                    <button type="button" class="btn btn-primary btn-sm" style="margin-top:0.75rem;" onclick="checkUserLicenseStatus()">
+                        🔄 Cek Status Lisensi Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULT CARD SAAT PEMBAYARAN DIVALIDASI ADMIN -->
+            <div id="license-success-box" style="display:none;">
+                <div class="license-box">
+                    <h3 style="color:#4ade80; font-size:1.3rem; margin-bottom:0.75rem;">
+                        🎉 Selamat pembelian kode lisensi sukses
+                    </h3>
+                    <p style="color:var(--text); font-size:1.05rem; margin-bottom:1rem;">
+                        mohon copy paste code licence ini Ke Bot SangPintar di front end nya:
+                    </p>
+                    <div style="background:rgba(0,0,0,0.4); padding:1rem; border-radius:8px; border:1px solid #16a34a; margin:1rem 0;">
+                        <span style="color:var(--text-muted); font-size:0.9rem;">Code Licence:</span>
+                        <div class="license-code" id="display-license-code">SP-XXXX-XXXX-XXXX</div>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="copyGeneratedLicenseCode()" id="btn-copy-code">
+                        📋 Copy Code Licence
+                    </button>
+                </div>
+
+                <div class="card" style="background:#131d31; border-color:#2563eb; margin-top:1.5rem;">
+                    <h4 style="color:#38bdf8; margin-bottom:0.75rem;">🤖 Aktifkan Lisensi ke Bot SangPintar</h4>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+                        Tempelkan / paste <strong>Code Licence</strong> yang sudah digenerate ke input di bawah ini atau kirimkan langsung ke Bot Telegram:
+                    </p>
+                    <div style="display:flex; gap:0.75rem;">
+                        <input type="text" class="form-control" id="input-redeem-license" placeholder="SP-XXXX-XXXX-XXXX">
+                        <button type="button" class="btn btn-primary" onclick="redeemLicenseOnFrontend()">
+                            🚀 Aktifkan
+                        </button>
+                    </div>
+                    <div id="redeem-result-area" style="margin-top:0.75rem;"></div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+                <button type="button" class="btn btn-outline" onclick="switchWizardStep(3)">⬅️ Kembali ke Pembayaran</button>
+                <a href="{{ url_for('user_data_page') }}" class="btn btn-outline">📝 Ke Halaman Isi Data User</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- MODAL QR CODE PAYMENT (QRISS_ANTSGROUPS.pdf)                   -->
+<!-- ============================================================== -->
+<div class="modal-overlay" id="qr-payment-modal">
+    <div class="modal-content" style="max-width:620px;">
+        <button type="button" class="modal-close" onclick="closeQRPaymentModal()">&times;</button>
+        <h2 style="font-size:1.35rem; margin-bottom:0.5rem; text-align:center;">📱 QRCode Payment QRISS</h2>
+        <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+            QRISS_ANTSGROUPS.pdf — PT Ananda Technology Solution
+        </p>
+
+        <div style="background:#fff; border-radius:8px; padding:0.5rem; text-align:center;">
+            <iframe src="{{ url_for('serve_qris') }}" width="100%" height="450px" style="border:none; border-radius:6px;">
+                Browser Anda tidak mendukung preview PDF. Silakan gunakan link unduh di bawah.
+            </iframe>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem;">
+            <a href="{{ url_for('serve_qris') }}" target="_blank" class="btn btn-outline btn-sm">
+                🔍 Buka PDF Layar Penuh
+            </a>
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeQRPaymentModal()">
+                ✅ Tutup / Sudah Scan QR
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- IMAGE MODAL VIEWER -->
+<div class="img-modal-overlay" id="global-img-modal" onclick="this.classList.remove('show')">
+    <img id="global-img-src" src="" alt="Bukti Pembayaran">
+</div>
+
+<!-- BOTTOM QUICK NAVIGATION BAR -->
+<div style="position:fixed; bottom:0; left:0; right:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(8px); border-top:1px solid var(--border); padding:0.75rem 1.5rem; display:flex; justify-content:center; gap:1rem; z-index:90;">
+    <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm">🏠 Setup Wizard</a>
+    <a href="{{ url_for('user_data_page') }}" class="btn btn-outline btn-sm">📝 Halaman Isi Data User</a>
+</div>
+<div style="height:60px;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{
+    "users": {
+        "7106923484": {
+            "chat_id": 7106923484,
+            "nama_user": "Ananda Rauf Maududi",
+            "username_user": "anandaraufm",
+            "email_user": "anandaraufm@gmail.com",
+            "langganan": "1 Bulan",
+            "kode_lisensi": "SP-BE32-913F-4D37",
+            "is_activated": true,
+            "used": true,
+            "tanggal_pendaftaran": "2026-08-08 14:12:51",
+            "tanggal_aktivasi": "2026-08-08 14:13:34",
+            "waktu_expired": "2026-09-07 14:13:34"
+        },
+        "8110696038": {
+            "chat_id": 8110696038,
+            "nama_user": "📋 Command List",
+            "username_user": "📋 Command List",
+            "email_user": "anandaraufm@gmail.com",
+            "langganan": "1 Bulan",
+            "kode_lisensi": "SP-AFD7-B4D8-DE1A",
+            "is_activated": true,
+            "used": true,
+            "tanggal_pendaftaran": "2026-11-19 23:47:44",
+            "tanggal_aktivasi": "2026-11-19 23:48:23",
+            "waktu_expired": "2026-12-19 23:48:23"
+        }
+    },
+    "keys": {
+        "SP-BE32-913F-4D37": {
+            "chat_id": 7106923484,
+            "used": true,
+            "langganan": "1 Bulan",
+            "activated_by": 7106923484
+        },
+        "SP-AFD7-B4D8-DE1A": {
+            "chat_id": 8110696038,
+            "used": true,
+            "langganan": "1 Bulan",
+            "activated_by": 8110696038
+        },
+        "SP-BE06-7308-33E8": {
+            "chat_id": null,
+            "email": "test.validate@gmail.com",
+            "nama_user": "Test Validate",
+            "used": false,
+            "langganan": "1 Bulan"
+        }
+    }
+}

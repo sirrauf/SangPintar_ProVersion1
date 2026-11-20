@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Login Admin Dashboard — SangPintar Pro{% endblock %}
+{% block body %}
+<div class="login-wrapper">
+    <div class="login-card card">
+        <div style="text-align:center; margin-bottom:2rem;">
+            <div style="font-size:2.5rem; margin-bottom:0.5rem;">🔐</div>
+            <h1 style="font-size:1.6rem; color:var(--primary); margin-bottom:0.25rem;">Admin Panel Dashboard</h1>
+            <p class="subtitle">SangPintar Pro Version 1.0.0.0</p>
+            <span class="version-badge" style="background:#1e40af;">PT Ananda Technology Solution</span>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">
+            <span>❌</span>
+            <div>{{ error }}</div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_login_page') }}">
+            <div class="form-group">
+                <label for="email">📧 Email Admin</label>
+                <input type="email" class="form-control" id="email" name="email"
+                       required placeholder="anandaraufm@gmail.com"
+                       value="{{ email_val or 'anandaraufm@gmail.com' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="password">🔑 Password Admin</label>
+                <input type="password" class="form-control" id="password" name="password"
+                       required placeholder="Masukkan password admin">
+                
+                <!-- REQUIRED HINT AS PER USER SPECIFICATION -->
+                <div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:6px; padding:0.6rem 0.85rem; margin-top:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-size:1.1rem;">💡</span>
+                    <span style="font-size:0.85rem; color:#fde047; font-weight:600;">
+                        pass hint is admin123
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="padding:0.85rem; font-size:1rem; margin-top:1.5rem;">
+                🔓 Masuk ke Dashboard Admin
+            </button>
+        </form>
+
+        <div style="text-align:center; margin-top:2rem; padding-top:1.25rem; border-top:1px solid var(--border);">
+            <a href="{{ url_for('index') }}" style="color:var(--text-muted); font-size:0.88rem; text-decoration:none;">
+                ← Kembali ke Halaman Setup Wizard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
